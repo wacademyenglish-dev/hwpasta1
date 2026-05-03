@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WOLF LABS | Weekend Rewind Homework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;700;900&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* === SCRAPBOOK THEME VARIABLES === */
+        :root {
+            --bg-paper: #F0EAE1;       
+            --polaroid-white: #FFFFFF;
+            --accent-orange: #FF5A5F;  
+            --accent-blue: #087E8B;    
+            --accent-yellow: #F7C548;  
+            --text-dark: #2D3142;      
+            --text-muted: #9095A5;
+        }
+
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #1a1a24; /* Fundo exterior escuro para destacar o telemóvel */
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-title { font-family: 'Quicksand', sans-serif; }
+        .font-handwriting { font-family: 'Kalam', cursive; }
+
+        /* === MOBILE PHONE MOCKUP === */
+        .phone-mockup {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-paper);
+            border-radius: 40px;
+            border: 12px solid #2D3142;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), inset 0 0 0 2px #555;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+        }
+
+        /* Fake Notch */
+        .phone-notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 150px; height: 30px; background-color: #2D3142;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 50;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 24px; font-size: 12px; font-weight: 700; z-index: 40; position: relative; color: var(--text-dark);
+        }
+
+        /* Bottom Home Bar */
+        .home-indicator {
+            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 4px; background-color: rgba(0,0,0,0.3); border-radius: 100px; z-index: 50;
+        }
+
+        /* APP CONTENT SCROLL AREA */
+        .app-content {
+            flex-grow: 1; overflow-y: auto; overflow-x: hidden;
+            padding-bottom: 90px; display: flex; flex-direction: column;
+        }
+        .app-content::-webkit-scrollbar { display: none; } 
+
+        /* APP BOTTOM NAV */
+        .app-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 85px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(0,0,0,0.05); box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: 15px; z-index: 40; border-radius: 0 0 28px 28px;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-muted); font-size: 10px; gap: 4px; transition: all 0.2s; font-family: 'Quicksand', sans-serif; font-weight: 800; text-transform: uppercase;
+        }
+        .nav-item.active { color: var(--accent-orange); }
+
+        /* SCREENS */
+        .screen {
+            display: none; flex-direction: column; height: 100%; width: 100%; padding: 24px;
+            animation: slideIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        .screen.active { display: flex; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* COMPONENTS */
+        .polaroid-card {
+            background-color: var(--polaroid-white);
+            border-radius: 16px; padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.03);
+            width: 100%; border: 2px solid rgba(0,0,0,0.05); position: relative;
+        }
+        .polaroid-card::before {
+            content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+            width: 60px; height: 20px; background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); backdrop-filter: blur(2px); z-index: 10;
+        }
+
+        .btn-orange {
+            background-color: var(--accent-orange); color: white; border-radius: 16px;
+            font-family: 'Quicksand', sans-serif; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; padding: 18px; width: 100%; text-align: center; border: none;
+            box-shadow: 0 4px 15px rgba(255, 90, 95, 0.3); cursor: pointer; transition: all 0.2s;
+        }
+        .btn-orange:active { transform: scale(0.96); }
+
+        .mcq-option {
+            background: white; border: 2px solid rgba(0,0,0,0.05);
+            border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); color: var(--text-dark);
+        }
+        .mcq-option:active:not(.locked) { transform: scale(0.98); }
+        .mcq-option.correct { background: #fff0f0; border-color: var(--accent-orange); color: var(--accent-orange); }
+        .mcq-option.wrong { background: #f0f0f0; border-color: #999; color: #999; }
+
+        /* CHAT BUBBLES */
+        .chat-bubble-left { background: white; color: var(--text-dark); padding: 14px 18px; border-radius: 16px 16px 16px 4px; align-self: flex-start; max-width: 85%; margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .chat-bubble-right { background: var(--accent-blue); color: white; padding: 14px 18px; border-radius: 16px 16px 4px 16px; align-self: flex-end; max-width: 85%; margin-bottom: 16px; box-shadow: 0 4px 10px rgba(8, 126, 139, 0.2); font-weight: 700;}
+
+        /* PROGRESS BAR */
+        .hw-progress-bg { width: 100%; height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; margin-bottom: 24px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);}
+        .hw-progress-fill { height: 100%; background: var(--accent-orange); width: 0%; transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1); border-radius: 10px;}
+
+        /* EFEITOS ESPECIAIS */
+        #confetti-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 999; }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(3px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-5px, 0, 0); } 40%, 60% { transform: translate3d(5px, 0, 0); } }
+    </style>
+</head>
+<body>
+
+    <!-- MOCKUP DO TELEMÓVEL -->
+    <div class="phone-mockup">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="phone-notch"></div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="clock">09:41</span>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-signal text-[10px]"></i>
+                <i class="fas fa-wifi text-[10px]"></i>
+                <i class="fas fa-battery-full text-xs"></i>
+            </div>
+        </div>
+
+        <!-- APP CONTENT -->
+        <div class="app-content" id="app-screens">
+            
+            <!-- SCREEN 0: DASHBOARD -->
+            <div class="screen active" id="screen-0">
+                <div class="flex items-center gap-4 mb-8 mt-6">
+                    <div class="w-14 h-14 rounded-2xl bg-[var(--accent-orange)]/10 flex items-center justify-center border border-[var(--accent-orange)]/20 text-[var(--accent-orange)] text-2xl shadow-sm">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-title uppercase tracking-widest font-bold">Wolf Labs Mobile</p>
+                        <h1 class="font-title text-2xl font-black text-var(--text-dark) uppercase tracking-tight">Homework</h1>
+                    </div>
+                </div>
+
+                <div class="polaroid-card mb-6 border-l-4 border-l-[var(--accent-orange)] border-t-0 border-r-0 border-b-0 rotate-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white bg-[var(--accent-orange)] px-3 py-1 rounded-full font-title shadow-sm">Pending</span>
+                        <i class="fas fa-camera-retro text-gray-400 text-lg"></i>
+                    </div>
+                    <h2 class="font-title text-2xl font-black mb-2 text-var(--text-dark)">Weekend Rewind</h2>
+                    <p class="text-sm text-gray-500 mb-8 leading-relaxed font-medium">Past Simple review. Let's remember the magic word DID and the shield DIDN'T.</p>
+                    
+                    <div class="hw-progress-bg"><div class="hw-progress-fill" id="main-progress"></div></div>
+                    <div class="flex justify-between text-xs font-bold text-gray-500 mb-8 font-title uppercase tracking-widest">
+                        <span>Memories</span>
+                        <span id="main-progress-text">0%</span>
+                    </div>
+
+                    <button class="btn-orange" onclick="goToScreen(1)">Start Review</button>
+                </div>
+
+                <div class="polaroid-card opacity-60 rotate-[-1deg] flex items-center gap-4 py-5">
+                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"><i class="fas fa-lock text-gray-400"></i></div>
+                    <div>
+                        <h2 class="font-title text-sm font-bold text-gray-500 uppercase tracking-widest">Hello World</h2>
+                        <p class="text-xs text-gray-400">Completed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 1: DIARY ENTRY (WAS/WERE) -->
+            <div class="screen" id="screen-1">
+                <div class="flex justify-between items-center mb-6 mt-4">
+                    <button onclick="goToScreen(0)" class="text-gray-400 hover:text-[var(--text-dark)]"><i class="fas fa-chevron-left text-xl"></i></button>
+                    <span class="font-title text-[10px] font-bold text-white uppercase tracking-widest bg-[var(--accent-orange)] px-4 py-1.5 rounded-full shadow-sm">Photo 1/4</span>
+                    <div class="w-6"></div> 
+                </div>
+
+                <h2 class="font-title text-2xl font-black mb-6 text-center tracking-tight">The Diary</h2>
+                
+                <div class="polaroid-card flex-grow flex flex-col p-6 mb-8 bg-white rotate-1">
+                    <div class="w-full h-32 bg-gray-100 rounded-lg mb-4 flex items-center justify-center text-5xl shadow-inner border border-gray-200">
+                        🏖️
+                    </div>
+                    
+                    <div class="text-2xl font-medium leading-relaxed text-gray-600 font-handwriting text-center mt-2">
+                        "Dear Diary, yesterday <br>the beach <span id="blank-1" class="text-[var(--accent-orange)] border-b-2 border-dashed border-[var(--accent-orange)] font-bold px-4">______</span> very hot!"
+                    </div>
+                </div>
+
+                <div class="space-y-3 mt-auto">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-4 font-title text-center font-bold">Select the correct past verb</p>
+                    <div class="mcq-option" onclick="checkAnswer(this, 1, false, '')">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 text-xs font-bold text-gray-500">A</div>
+                        <span class="text-lg">is</span>
+                    </div>
+                    <div class="mcq-option" onclick="checkAnswer(this, 1, true, 'was')">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 text-xs font-bold text-gray-500">B</div>
+                        <span class="text-lg">was</span>
+                    </div>
+                    <div class="mcq-option" onclick="checkAnswer(this, 1, false, '')">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 text-xs font-bold text-gray-500">C</div>
+                        <span class="text-lg">were</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: CHAT (IRREGULAR VERBS) -->
+            <div class="screen" id="screen-2">
+                <div class="flex justify-between items-center mb-6 mt-4">
+                    <div class="w-6"></div>
+                    <span class="font-title text-[10px] font-bold text-white uppercase tracking-widest bg-[var(--accent-blue)] px-4 py-1.5 rounded-full shadow-sm">Photo 2/4</span>
+                    <div class="w-6"></div>
+                </div>
+
+                <h2 class="font-title text-2xl font-black mb-6 text-center uppercase">Text Messages</h2>
+                
+                <div class="polaroid-card flex-grow flex flex-col p-5 mb-8 rotate-[-1deg] !bg-[#f0f2f5]">
+                    <div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-600">S</div>
+                        <div><p class="font-bold text-sm leading-none text-gray-800">Sarah</p></div>
+                    </div>
+                    
+                    <div class="chat-bubble-left">
+                        What did you eat for dinner on Saturday? 🍕
+                    </div>
+
+                    <div id="reply-container-2" class="hidden chat-bubble-right"></div>
+                </div>
+
+                <div class="mt-auto space-y-3">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-4 font-title text-center font-bold">Reply with the irregular verb</p>
+                    <div class="mcq-option" onclick="checkAnswer(this, 2, false, '')">I eated pizza with my friends.</div>
+                    <div class="mcq-option" onclick="checkAnswer(this, 2, true, 'I ate pizza with my friends.')">I ate pizza with my friends.</div>
+                    <div class="mcq-option" onclick="checkAnswer(this, 2, false, '')">I eat pizza with my friends.</div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: FACT OR MYTH (DID) -->
+            <div class="screen" id="screen-3">
+                <div class="flex justify-between items-center mb-6 mt-4">
+                    <div class="w-6"></div>
+                    <span class="font-title text-[10px] font-bold text-white uppercase tracking-widest bg-[var(--accent-yellow)] px-4 py-1.5 rounded-full shadow-sm">Photo 3/4</span>
+                    <div class="w-6"></div>
+                </div>
+
+                <h2 class="font-title text-2xl font-black mb-2 text-center uppercase tracking-tight">Fact or Myth?</h2>
+                <p class="text-xs text-gray-500 text-center mb-8 font-medium">Does the magic word protect the verb?</p>
+
+                <div class="polaroid-card text-center mb-10 border-t-4 border-[var(--accent-yellow)] rotate-1">
+                    <p class="text-2xl font-bold leading-relaxed font-title py-8 text-[var(--text-dark)]">
+                        "Did you <span class="text-[var(--accent-orange)] underline decoration-wavy decoration-2 underline-offset-4">went</span> to the park?"
+                    </p>
+                </div>
+
+                <div class="flex gap-4 mt-auto">
+                    <div class="flex-1 mcq-option justify-center flex-col gap-3 h-36" onclick="checkAnswer(this, 3, false, '')">
+                        <i class="fas fa-check-circle text-3xl text-gray-300"></i>
+                        <span class="font-title font-bold tracking-widest uppercase">FACT (Correct)</span>
+                    </div>
+                    <div class="flex-1 mcq-option justify-center flex-col gap-3 h-36" onclick="checkAnswer(this, 3, true, 'myth')">
+                        <i class="fas fa-times-circle text-3xl text-gray-300"></i>
+                        <span class="font-title font-bold tracking-widest uppercase">MYTH (Wrong)</span>
+                    </div>
+                </div>
+                <p id="myth-fb-3" class="hidden text-center text-xs text-[var(--accent-blue)] mt-6 font-bold leading-relaxed bg-[var(--accent-blue)]/10 p-4 rounded-xl border border-[var(--accent-blue)]/20">
+                    Correct! The magic word <strong>DID</strong> protects the verb. It should be "Did you <strong>go</strong>".
+                </p>
+            </div>
+
+            <!-- SCREEN 4: THE SHIELD (DIDN'T) -->
+            <div class="screen" id="screen-4">
+                <div class="flex justify-between items-center mb-6 mt-4">
+                    <div class="w-6"></div>
+                    <span class="font-title text-[10px] font-bold text-white uppercase tracking-widest bg-[var(--accent-blue)] px-4 py-1.5 rounded-full shadow-sm">Photo 4/4</span>
+                    <div class="w-6"></div>
+                </div>
+
+                <h2 class="font-title text-2xl font-black mb-2 text-center uppercase tracking-tight">The Negative Shield</h2>
+                <p class="text-xs text-gray-500 text-center mb-8 font-medium">Complete the sentence.</p>
+
+                <div class="polaroid-card text-center mb-10 rotate-[-2deg]">
+                    <div class="w-16 h-16 bg-[var(--accent-blue)]/10 rounded-full flex items-center justify-center text-3xl mx-auto mb-6 text-[var(--accent-blue)]">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <p class="text-2xl font-bold leading-relaxed font-handwriting text-gray-600 mb-4">
+                        "I was tired. I didn't <span id="blank-4" class="text-[var(--accent-blue)] border-b-2 border-dashed border-[var(--accent-blue)] px-2">______</span> swimming."
+                    </p>
+                </div>
+
+                <div class="space-y-3 mt-auto">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-4 font-title text-center font-bold">Select the protected verb</p>
+                    <div class="mcq-option justify-center" onclick="checkAnswer(this, 4, true, 'go')">
+                        <span class="text-xl font-bold font-handwriting text-gray-600">go</span>
+                    </div>
+                    <div class="mcq-option justify-center" onclick="checkAnswer(this, 4, false, '')">
+                        <span class="text-xl font-bold font-handwriting text-gray-600">went</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 5: SUCCESS -->
+            <div class="screen" id="screen-5">
+                <div class="flex-1 flex flex-col items-center justify-center text-center">
+                    <div class="w-32 h-32 rounded-full bg-[var(--accent-yellow)] flex items-center justify-center text-6xl text-white mb-8 shadow-[0_0_40px_rgba(247,197,72,0.6)]" style="animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h1 class="font-title text-4xl font-black text-[var(--text-dark)] mb-3 uppercase tracking-tight">Great Job!</h1>
+                    <p class="text-gray-500 mb-12 text-sm leading-relaxed max-w-[280px] font-medium">Homework completed. Your memories are perfectly stored.</p>
+                    
+                    <div class="polaroid-card mb-12 border-t-4 border-t-[var(--accent-orange)] rotate-1">
+                        <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-5">
+                            <span class="text-sm font-bold text-gray-500 font-title uppercase tracking-widest">Grammar</span>
+                            <span class="text-sm font-black text-[var(--accent-orange)]">100% Correct</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-gray-500 font-title uppercase tracking-widest">Memories</span>
+                            <span class="text-sm font-black text-[var(--accent-blue)]">+40 XP</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-orange" onclick="resetApp()">Return to Menu</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- APP BOTTOM NAV -->
+        <div class="app-nav">
+            <div class="nav-item active cursor-pointer" onclick="goToScreen(0)">
+                <i class="fas fa-images text-xl mb-1"></i>
+                <span>Album</span>
+            </div>
+            <div class="nav-item cursor-pointer">
+                <i class="fas fa-book text-xl mb-1"></i>
+                <span>Diary</span>
+            </div>
+            <div class="nav-item cursor-pointer">
+                <i class="fas fa-user text-xl mb-1"></i>
+                <span>Profile</span>
+            </div>
+        </div>
+
+        <!-- Home Indicator -->
+        <div class="home-indicator"></div>
+    </div>
+
+    <script>
+        // -- Mobile Clock Logic --
+        function updateClock() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            h = h < 10 ? '0'+h : h;
+            m = m < 10 ? '0'+m : m;
+            document.getElementById('clock').innerText = `${h}:${m}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // -- Navigation Logic --
+        let progress = 0;
+
+        function goToScreen(num) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`screen-${num}`).classList.add('active');
+            
+            // Update Dashboard Progress if going home
+            if(num === 0) {
+                document.getElementById('main-progress').style.width = `${progress}%`;
+                document.getElementById('main-progress-text').innerText = `${progress}%`;
+                if(progress === 100) {
+                    const btn = document.querySelector('#screen-0 .btn-orange');
+                    btn.innerText = "Review Homework";
+                    btn.style.backgroundColor = "transparent";
+                    btn.style.border = "2px solid var(--accent-orange)";
+                    btn.style.color = "var(--accent-orange)";
+                    btn.style.boxShadow = "none";
+                }
+            }
+        }
+
+        // -- Minigame Logic --
+        function checkAnswer(element, taskNum, isCorrect, textValue) {
+            if (element.parentElement.classList.contains('locked')) return;
+            element.parentElement.classList.add('locked');
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                progress += 25; // 4 tasks = 25% each
+                
+                // Specific task animations & UI updates
+                if(taskNum === 1) {
+                    const blank = document.getElementById('blank-1');
+                    blank.innerText = textValue;
+                    blank.classList.remove('border-dashed', 'border-[var(--accent-orange)]', 'text-[var(--accent-orange)]');
+                    blank.classList.add('border-solid', 'border-gray-600', 'text-gray-600');
+                }
+                if(taskNum === 2) {
+                    const reply = document.getElementById('reply-container-2');
+                    reply.innerText = textValue;
+                    reply.classList.remove('hidden');
+                    reply.style.animation = "popIn 0.3s forwards";
+                }
+                if(taskNum === 3 && textValue === 'myth') {
+                    document.getElementById('myth-fb-3').classList.remove('hidden');
+                }
+                if(taskNum === 4) {
+                    const blank = document.getElementById('blank-4');
+                    blank.innerText = textValue;
+                    blank.classList.remove('border-dashed', 'border-[var(--accent-blue)]', 'text-[var(--accent-blue)]');
+                    blank.classList.add('border-solid', 'border-gray-600', 'text-gray-600');
+                }
+                
+                shootConfetti();
+                
+                setTimeout(() => {
+                    goToScreen(taskNum + 1);
+                }, 1800);
+
+            } else {
+                element.classList.add('wrong', 'shake');
+                setTimeout(() => {
+                    element.classList.remove('shake');
+                    element.parentElement.classList.remove('locked');
+                }, 500);
+            }
+        }
+
+        function resetApp() {
+            // Clean classes
+            document.querySelectorAll('.mcq-option').forEach(el => {
+                el.classList.remove('correct', 'wrong');
+            });
+            document.querySelectorAll('.locked').forEach(el => el.classList.remove('locked'));
+            
+            // Reset task 1
+            const blank1 = document.getElementById('blank-1');
+            blank1.innerHTML = "______";
+            blank1.className = "text-[var(--accent-orange)] border-b-2 border-dashed border-[var(--accent-orange)] font-bold px-4 transition-all";
+            
+            // Reset task 2
+            document.getElementById('reply-container-2').classList.add('hidden');
+            
+            // Reset task 3
+            document.getElementById('myth-fb-3').classList.add('hidden');
+
+            // Reset task 4
+            const blank4 = document.getElementById('blank-4');
+            blank4.innerHTML = "______";
+            blank4.className = "text-[var(--accent-blue)] border-b-2 border-dashed border-[var(--accent-blue)] px-2 transition-all";
+            
+            goToScreen(0);
+        }
+
+        // -- Confetti Canvas (Scrapbook/Retro style) --
+        function shootConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+            
+            const pieces = [];
+            const colors = ['#FF5A5F', '#087E8B', '#F7C548', '#FFFFFF'];
+            
+            for(let i=0; i<50; i++) {
+                pieces.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 1) * 14 - 2,
+                    size: Math.random() * 8 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rot: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+            
+            let animationId;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                
+                pieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.4; // Gentle gravity
+                    p.rot += p.rotSpeed;
+                    
+                    if(p.y < canvas.height) active = true;
+                    
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    // Circles for a soft scrapbook feel
+                    ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+                
+                if(active) animationId = requestAnimationFrame(animate);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
